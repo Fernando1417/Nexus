@@ -4,7 +4,7 @@
 '              based on names listed in an Excel worksheet. It includes functions to
 '              select a folder, list files, and rename them according to user input.
 ' Author: Fernando Chavarria
-' Last update: 12 - Sept - 2025
+' Last update: Sept - 2025
 ' ==============================================
 
 Option Explicit
@@ -25,38 +25,25 @@ Sub Files_List_Names()
     Dim objFSO As Object 'do I really need this object?
     Dim objFolder As Object
     Dim objFile As Object
-    Dim wsActive As Worksheet 'change to your specific sheet 
+    Dim wsActive As Worksheet 'change to your specific sheet
     Dim lngRow As Long
     
-    Set objFSO = CreateObject("Scripting.FileSystemObject")
-    Set objFolder = objFSO.GetFolder(m_strFolderPath)
+
+    Set objFolder = CreateObject("Scripting.FileSystemObject").GetFolder(m_strFolderPath)
     Set wsActive = ActiveSheet
     lngRow = 5
     
     For Each objFile In objFolder.Files
         wsActive.Cells(lngRow, 10).Value = objFile.Name
         wsActive.Cells(lngRow, 11).Value = objFile.Type
-        wsActive.Cells(lngRow, 12).Value = objFile.Size
-  
-        With wsActive.Shapes.Item(wsActive.Shapes.Count)
-            wsActive.Cells(lngRow, 13).Value = .Width & " x " & .Height
-        End With
-
-        wsActive.Cells(lngRow, 15).Select
-        
-        Selection.InsertPictureInCell (objFile.Path)
-        With wsActive.Shapes.Item(wsActive.Shapes.Count)
-            wsActive.Cells(lngRow, 13).Value = .Width
-            wsActive.Cells(lngRow, 14).Value = .Height
-        End With
-        
+        wsActive.Cells(lngRow, 12).Value = objFile.Size / 1000000
         
         lngRow = lngRow + 1
-    Next file
+    Next objFile
     
     ' Clean up
     Set objFolder = Nothing
-    Set objFSO = Nothing
+
 End Sub
 
 
@@ -147,6 +134,7 @@ Sub Sheet_Clear_Data()
         lngRow = lngRow + 1
     Loop
 End Sub
+
 
 
 
