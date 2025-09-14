@@ -7,8 +7,6 @@ Accessible automation for common file and image tasks, delivered in two flavors:
 
 The goal is a consistent, extensible framework rather than one-off scripts, with feature parity across implementations where it makes sense.
 
----
-
 ## Vision
 
 *   Consistency: Shared behavior and options across Excel, Bash, and Python.

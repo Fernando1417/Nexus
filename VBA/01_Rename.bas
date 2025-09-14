@@ -7,95 +7,92 @@
 ' Last update: 12 - Sept - 2025
 ' ==============================================
 
-
-
 Option Explicit
 
-Dim folderPath As String
-
-
+Private m_strFolderPath As String
 
 
 ' ==============================================
-' Main Function
+' Main Functions
 ' ==============================================
 
-Sub PrintNames()
-    ' Print the names of all files in a folder in excel
+Sub Files_List_Names()
+    ' Lists all files from selected folder into Excel worksheet
 
-   Call pick_a_folder
+   Call Files_Select_Folder
 
     ' Save the names of all the files from folderPath
-    Dim fso As Object
-    Dim folder As Object
-    Dim file As Object
-    Dim ws As Worksheet
-    Dim row As Long
+    Dim objFSO As Object 'do I really need this object?
+    Dim objFolder As Object
+    Dim objFile As Object
+    Dim wsActive As Worksheet 'change to your specific sheet 
+    Dim lngRow As Long
     
-    Set fso = CreateObject("Scripting.FileSystemObject")
-    Set folder = fso.GetFolder(folderPath)
-    Set ws = ActiveSheet
-    row = 5
+    Set objFSO = CreateObject("Scripting.FileSystemObject")
+    Set objFolder = objFSO.GetFolder(m_strFolderPath)
+    Set wsActive = ActiveSheet
+    lngRow = 5
     
-    For Each file In folder.Files
-        ws.Cells(row, 10).Value = file.Name
-        ws.Cells(row, 11).Value = file.Type
-        ws.Cells(row, 12).Value = file.Size
+    For Each objFile In objFolder.Files
+        wsActive.Cells(lngRow, 10).Value = objFile.Name
+        wsActive.Cells(lngRow, 11).Value = objFile.Type
+        wsActive.Cells(lngRow, 12).Value = objFile.Size
   
-        With ws.Shapes.Item(ws.Shapes.Count)
-            ws.Cells(row, 13).Value = .Width & " x " & .Height
+        With wsActive.Shapes.Item(wsActive.Shapes.Count)
+            wsActive.Cells(lngRow, 13).Value = .Width & " x " & .Height
         End With
 
-        ws.Cells(row, 15).Select
+        wsActive.Cells(lngRow, 15).Select
         
-        Selection.InsertPictureInCell (file.Path)
-        With ws.Shapes.Item(ws.Shapes.Count)
-            ws.Cells(row, 13).Value = .Width
-            ws.Cells(row, 14).Value = .Height
+        Selection.InsertPictureInCell (objFile.Path)
+        With wsActive.Shapes.Item(wsActive.Shapes.Count)
+            wsActive.Cells(lngRow, 13).Value = .Width
+            wsActive.Cells(lngRow, 14).Value = .Height
         End With
         
         
-        row = row + 1
+        lngRow = lngRow + 1
     Next file
     
     ' Clean up
-    Set folder = Nothing
-    Set fso = Nothing
+    Set objFolder = Nothing
+    Set objFSO = Nothing
 End Sub
 
 
-' This subroutine renames files based on the current name in column J and the new name in column N.
-Sub RenameFilesFromSheet()
-    Dim ws As Worksheet
-    Dim row As Long
-    Dim oldName As String
-    Dim newName As String
-    Dim fso As Object
+Sub Files_Rename_FromSheet()
+    Dim wsActive As Worksheet
+    Dim lngRow As Long
+    Dim strOldName As String
+    Dim strNewName As String
+    Dim strOldFilePath As String
+    Dim strNewFilePath As String
+    Dim objFSO As Object
     
     Application.ScreenUpdating = False
-    Set ws = ActiveSheet
-    Set fso = CreateObject("Scripting.FileSystemObject")
-    row = 5
+    Set wsActive = ActiveSheet
+    Set objFSO = CreateObject("Scripting.FileSystemObject")
+    lngRow = 5
     
     ' Loop through the rows and rename files
-    Do While ws.Cells(row, 10).Value <> ""
-        oldName = ws.Cells(row, 10).Value
-        newName = ws.Cells(row, 19).Value
+    Do While wsActive.Cells(lngRow, 10).Value <> ""
+        strOldName = wsActive.Cells(lngRow, 10).Value
+        strNewName = wsActive.Cells(lngRow, 19).Value
         
-        If newName <> "" Then
-            oldFilePath = folderPath & "\" & oldName
-            newFilePath = folderPath & "\" & newName
+        If strNewName <> "" Then
+            strOldFilePath = m_strFolderPath & "\" & strOldName
+            strNewFilePath = m_strFolderPath & "\" & strNewName
             
-            If fso.FileExists(oldFilePath) Then
-                fso.MoveFile oldFilePath, newFilePath
-                ws.Cells(row, 20).Value = "done"
+            If objFSO.FileExists(strOldFilePath) Then
+                objFSO.MoveFile strOldFilePath, strNewFilePath
+                wsActive.Cells(lngRow, 20).Value = "done"
             End If
         End If
         
-        row = row + 1
+        lngRow = lngRow + 1
     Loop
     
-    Set fso = Nothing
+    Set objFSO = Nothing
     Application.ScreenUpdating = True
 End Sub
 
@@ -104,18 +101,16 @@ End Sub
 
 
 ' ==============================================
-' suporting Function
+' Functions
 ' ==============================================
 
-
-Sub pick_a_folder()
-
-    ' Ask user to pick a folder
+Sub Files_Select_Folder()
+    ' Opens folder picker dialog and stores selected path
     With Application.FileDialog(msoFileDialogFolderPicker)
         .Title = "Select a Folder"
         .Show
         If .SelectedItems.Count > 0 Then
-            folderPath = .SelectedItems(1)
+            m_strFolderPath = .SelectedItems(1)
         Else
             MsgBox "No folder selected!", vbExclamation
             Exit Sub
@@ -128,29 +123,28 @@ End Sub
 
 
 ' ==============================================
-' reset sheet
+' Utility Functions
 ' ==============================================
 
-
-Sub ReSet()
-    Dim ws As Worksheet
-    Dim row As Long
-    Dim oldName As String
-    Dim newName As String
+Sub Sheet_Clear_Data()
+    Dim wsActive As Worksheet
+    Dim lngRow As Long
+    Dim strOldName As String
+    Dim strNewName As String
     
 
-    Set ws = ActiveSheet
-    row = 5
+    Set wsActive = ActiveSheet
+    lngRow = 5
     
     ' Loop through the rows and rename files
-    Do While ws.Cells(row, 10).Value <> ""
+    Do While wsActive.Cells(lngRow, 10).Value <> ""
     
     
-    ws.Range(Cells(row, 10), Cells(row, 20)).Clear
+    wsActive.Range(Cells(lngRow, 10), Cells(lngRow, 20)).Clear
 
         
         
-        row = row + 1
+        lngRow = lngRow + 1
     Loop
 End Sub
 
