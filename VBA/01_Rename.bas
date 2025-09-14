@@ -17,7 +17,7 @@ Dim folderPath As String
 
 
 ' ==============================================
-' Main Import Function
+' Main Function
 ' ==============================================
 
 Sub PrintNames()
@@ -64,28 +64,6 @@ Sub PrintNames()
 End Sub
 
 
-
-
-
-
-
-
-Sub pick_a_folder()
-
-    ' Ask user to pick a folder
-    With Application.FileDialog(msoFileDialogFolderPicker)
-        .Title = "Select a Folder"
-        .Show
-        If .SelectedItems.Count > 0 Then
-            folderPath = .SelectedItems(1)
-        Else
-            MsgBox "No folder selected!", vbExclamation
-            Exit Sub
-        End If
-    End With
-
-End Sub
-
 ' This subroutine renames files based on the current name in column J and the new name in column N.
 Sub RenameFilesFromSheet()
     Dim ws As Worksheet
@@ -124,6 +102,34 @@ End Sub
 
 
 
+
+' ==============================================
+' suporting Function
+' ==============================================
+
+
+Sub pick_a_folder()
+
+    ' Ask user to pick a folder
+    With Application.FileDialog(msoFileDialogFolderPicker)
+        .Title = "Select a Folder"
+        .Show
+        If .SelectedItems.Count > 0 Then
+            folderPath = .SelectedItems(1)
+        Else
+            MsgBox "No folder selected!", vbExclamation
+            Exit Sub
+        End If
+    End With
+
+End Sub
+
+
+
+
+' ==============================================
+' reset sheet
+' ==============================================
 
 
 Sub ReSet()
